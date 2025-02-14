@@ -1,13 +1,34 @@
 from flask import Flask, render_template
 from config import Config
 import os
+from models import db
+from models import User
+from flask_jwt_extended import JWTManager
+from api import api
+from werkzeug.security import generate_password_hash
 
-def createApp():
-    app = Flask(__name__, template_folder=os.path.join(os.pardir, "frontend"),  static_folder=os.path.join(os.pardir, "frontend"))
-    app.config.from_object(Config)
-    return app
+app = Flask(__name__, template_folder=os.path.join(os.pardir, "frontend"),  static_folder=os.path.join(os.pardir, "frontend"))
+app.config.from_object(Config)
 
-app = createApp()
+# Initialize extensions
+db.init_app(app)
+api.init_app(app)
+jwt = JWTManager(app)
+
+#function to create an admin
+def create_admin():
+    with app.app_context():
+        admin_user = User.query.filter_by(is_admin = True).first()
+        if not admin_user:
+            admin_user = User(username = "admin", name = "Admin", email = "admin@gmail.com", password = generate_password_hash('admin'), is_admin = True)
+            db.session.add(admin_user)
+            db.session.commit()
+            print("admin user created successfully")
+
+# Create database tables if they don't exist
+with app.app_context():
+    db.create_all()
+    create_admin()
 
 @app.route("/")
 def index():
