@@ -6,6 +6,7 @@ from models import User
 from flask_jwt_extended import JWTManager
 from api import api
 from werkzeug.security import generate_password_hash
+from api import cache
 
 app = Flask(__name__, template_folder=os.path.join(os.pardir, "frontend"),  static_folder=os.path.join(os.pardir, "frontend"))
 app.config.from_object(Config)
@@ -13,6 +14,7 @@ app.config.from_object(Config)
 # Initialize extensions
 db.init_app(app)
 api.init_app(app)
+cache.init_app(app)
 jwt = JWTManager(app)
 
 #function to create an admin
@@ -32,6 +34,11 @@ with app.app_context():
 
 @app.route("/")
 def index():
+    return render_template("index.html")
+
+# Catch all other routes and serve the index file
+@app.route("/<path:path>")
+def catch_all(path):
     return render_template("index.html")
 
 if __name__ == "__main__":
