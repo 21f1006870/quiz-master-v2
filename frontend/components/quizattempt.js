@@ -48,56 +48,53 @@ const QuizAttempt = {
   methods: {
     async fetchQuizDetails() {
       try {
-        console.log("📌 Route Params:", this.$route.params); // Debugging
         const quizId = this.$route.params.quizId;
         
         if (!quizId) {
-          console.error("🚨 Quiz ID is undefined! Check route params.");
+          console.error("Quiz ID is undefined!");
           return;
         }
 
         const token = localStorage.getItem('token');
         if (!token) {
-          console.error("❌ No auth token found! Please log in.");
+          console.error(" No auth token found!");
           return;
         }
 
         // Fetch Quiz Details
-        console.log(`🔄 Fetching quiz details for Quiz ID: ${quizId}`);
+        console.log(`Fetching quiz details for Quiz ID: ${quizId}`);
         const quizResponse = await fetch(`/api/quiz/${quizId}`, {
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });
 
         if (!quizResponse.ok) {
-          throw new Error(`❌ Quiz fetch failed: ${quizResponse.status}`);
+          throw new Error(` Quiz fetch failed: ${quizResponse.status}`);
         }
         this.quiz = await quizResponse.json();
-        console.log("✅ Quiz Details:", this.quiz);
+        console.log(" Quiz Details:", this.quiz);
 
         // Fetch Quiz Questions
-        console.log(`🔄 Fetching questions for Quiz ID: ${quizId}`);
+        console.log(`Fetching questions for Quiz ID: ${quizId}`);
         const questionResponse = await fetch(`/api/quiz/${quizId}/questions`, {
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });
 
         if (!questionResponse.ok) {
-          throw new Error(`❌ Questions fetch failed: ${questionResponse.status}`);
+          throw new Error(` Questions fetch failed: ${questionResponse.status}`);
         }
 
         this.questions = await questionResponse.json();
-        console.log("✅ Questions Fetched:", this.questions);
+        console.log(" Questions Fetched:", this.questions);
 
-        // Validate response format
         if (!Array.isArray(this.questions)) {
-          throw new Error("❌ Invalid response format: Expected an array of questions.");
+          throw new Error("Invalid response format: Expected an array of questions.");
         }
 
-        // Set timer if applicable
         this.timer = this.quiz.time_duration ? this.quiz.time_duration * 60 : 0;
         this.startTimer();
 
       } catch (error) {
-        console.error('❌ Error fetching quiz:', error.message);
+        console.error('Error fetching quiz:', error.message);
       }
     },
 
@@ -121,33 +118,28 @@ const QuizAttempt = {
         const quizId = this.$route.params.quizId;
         const token = localStorage.getItem('token');
     
-        // Convert answers to expected format (ensure numbers)
         const formattedAnswers = {};
         for (const [questionId, option] of Object.entries(this.answers)) {
-          formattedAnswers[questionId] = Number(option);  // Convert to number
+          formattedAnswers[questionId] = Number(option);  
         }
-    
-        console.log("🔄 Submitting quiz...", { quizId, answers: formattedAnswers });
-    
+        
         const response = await fetch(`/api/quiz/${quizId}/submit`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ answer: formattedAnswers })  // Adjusted key to match backend
+          body: JSON.stringify({ answer: formattedAnswers })  
         });
     
-        if (!response.ok) throw new Error(`❌ Quiz submission failed: ${response.status}`);
+        if (!response.ok) throw new Error(` Quiz submission failed: ${response.status}`);
         
         const result = await response.json();
-        console.log("✅ Quiz Submission Result:", result);  // Debugging output
     
         alert(`🎉 You got ${result.correct_answers} out of ${result.total_questions} correct!`);
-        this.$router.replace('/user/dashboard');  // Redirect after submission
+        this.$router.replace('/user/dashboard');  
       } catch (error) {
-        console.error('❌ Error submitting quiz:', error);
+        console.error(' Error submitting quiz:', error);
       }
     }
   },
-    
 
   mounted() {
     this.fetchQuizDetails();

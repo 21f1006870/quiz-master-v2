@@ -85,7 +85,7 @@ const QuestionPage = {
         console.log("API Response:", data);
 
         if (Array.isArray(data)) {
-          this.questions = data; // Directly store the array
+          this.questions = data; 
           console.log("Questions loaded:", this.questions);
         } else {
           console.error("Unexpected response format:", data);
@@ -106,7 +106,7 @@ const QuestionPage = {
         });
 
         if (response.ok) {
-          this.fetchQuestions(); // Refresh questions after deletion
+          this.fetchQuestions(); 
         } else {
           const errorData = await response.json();
           alert(errorData.message || 'Failed to delete question.');

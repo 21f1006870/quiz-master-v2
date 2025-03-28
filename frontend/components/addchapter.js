@@ -47,11 +47,11 @@ const AddChapter = {
                 });
 
                 const data = await response.json();
-                console.log("Response:", data); // Debugging
+                console.log("Response:", data); 
 
                 if (response.ok) {
                     alert("Chapter added successfully!");
-                    this.$router.push(`/subjects/${this.subjectId}/chapters`); // Redirect fix
+                    this.$router.push(`/subjects/${this.subjectId}/chapters`); 
                 } else {
                     alert(data.message || "Failed to add chapter.");
                 }

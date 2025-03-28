@@ -57,7 +57,7 @@ const ChapterPage = {
   data() {
     return { 
       chapters: [], 
-      subjectId: this.$route.params.subjectId // Get the correct subjectId from route params
+      subjectId: this.$route.params.subjectId 
     };
   },
   methods: {
