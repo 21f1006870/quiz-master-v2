@@ -213,7 +213,7 @@ class ChapterList(Resource):
         } for c in chapters], 200
 
     @jwt_required()
-    def post(self, subject_id):  # Accept subject_id from URL
+    def post(self, subject_id):  
         args = chapter_parser.parse_args()
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
@@ -221,7 +221,6 @@ class ChapterList(Resource):
         if not user or not user.is_admin:
             return {"message": "Unauthorized access"}, 401
 
-        # Validate that the subject exists
         subject = SubjectModel.query.get(subject_id)
         if not subject:
             return {"message": "Subject not found"}, 404
@@ -229,7 +228,7 @@ class ChapterList(Resource):
         new_chapter = Chapter(
             name=args['name'],
             description=args['description'],
-            subject_id=subject_id  # Use subject_id from URL, not from request body
+            subject_id=subject_id  
         )
         db.session.add(new_chapter)
         db.session.commit()
@@ -267,7 +266,6 @@ class ChapterDetail(Resource):
 class QuizList(Resource):
     @jwt_required()
     def get(self, chapter_id): 
-        """Get all questions for a quiz"""
         chapter = Chapter.query.get(chapter_id)
         if not chapter:
             return {"message": "Chapter not found"}, 404    
@@ -282,7 +280,6 @@ class QuizList(Resource):
 
     @jwt_required()
     def post(self, chapter_id):  
-        """Add a new question (Admin only)"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -328,7 +325,6 @@ class QuizDetail(Resource):
 
     @jwt_required()
     def delete(self, chapter_id, quiz_id):  
-        """Delete a quiz (Admin only)"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -348,7 +344,6 @@ class QuizDetail(Resource):
 class QuestionList(Resource):
     @jwt_required()
     def get(self, quiz_id):
-        """Get all questions for a quiz"""
         quiz = Quiz.query.get(quiz_id)
         if not quiz:
             return {"message": "Quiz not found"}, 404
@@ -363,7 +358,6 @@ class QuestionList(Resource):
 
     @jwt_required()
     def post(self, quiz_id):
-        """Add a new question (Admin only)"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -393,7 +387,6 @@ class QuestionList(Resource):
 class QuestionDetail(Resource):
     @jwt_required()
     def put(self, quiz_id, question_id):
-        """Update a question (Admin only)"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -417,7 +410,6 @@ class QuestionDetail(Resource):
 
     @jwt_required()
     def delete(self, quiz_id, question_id):
-        """Delete a question (Admin only)"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -473,7 +465,6 @@ class QuestionApi(Resource):
 class SubmitQuiz(Resource):
     @jwt_required()
     def post(self, quiz_id):
-        """Submit a quiz, store user answers, and calculate the score"""
         user_id = get_jwt_identity().get("id")
         user = User.query.get(user_id)
 
@@ -485,20 +476,17 @@ class SubmitQuiz(Resource):
             return {"message": "Quiz not found"}, 404
 
         data = request.get_json()
-        answers = data.get("answer", {})  # Dictionary of question_id: selected_option
+        answers = data.get("answer", {})  
 
-        # Calculate score and store answers
         total_questions = len(answers)
         correct_answers = 0
 
         for q_id, selected_option in answers.items():
             question = Question.query.get(q_id)
             if question:
-                # Check correctness
                 if question.correct_option == selected_option:
                     correct_answers += 1
                 
-                # Store user answer in UserAnswer table
                 user_answer = UserAnswer(
                     user_id=user_id,
                     quiz_id=quiz_id,
@@ -512,7 +500,7 @@ class SubmitQuiz(Resource):
         new_score = Score(user_id=user_id, quiz_id=quiz_id, score=score_value)
         db.session.add(new_score)
 
-        db.session.commit()  # Commit both user answers and score
+        db.session.commit()  
 
         return {
             "message": "Quiz submitted successfully",
@@ -582,7 +570,6 @@ class ReviewQuiz(Resource):
 class SearchAPI(Resource):
     @jwt_required()
     def get(self):
-        """Search subjects,chapters and quizzes"""
         query = request.args.get("query")
 
         if not query:
@@ -601,7 +588,7 @@ class SearchAPI(Resource):
 #--------------------Summary------------------------
     
 class Summary(Resource):
-    "@cache.cached(timeout=20)" # Cache for 20 seconds
+    "@cache.cached(timeout=40)" # Cache for 40 seconds
     @jwt_required()
     def get(self):
         user_id = get_jwt_identity().get("id")
@@ -627,12 +614,16 @@ class Summary(Resource):
         quiz_distribution_data = {}
         subjects = SubjectModel.query.all()
         for subject in subjects:
-            quiz_count = Quiz.query.filter_by(id=subject.id).count()
+            quiz_count = Quiz.query.join(Chapter).filter(Chapter.subject_id == subject.id).count()
             quiz_distribution_data[subject.name] = quiz_count
 
-        # Average Quiz Score
-        all_scores = [score.score for score in Score.query.all()]
-        avg_quiz_score = round(sum(all_scores) / len(all_scores), 2) if all_scores else 0
+        # Average Score per Quiz
+        quiz_scores = {}
+        quizzes = Quiz.query.all()
+        for quiz in quizzes:
+            quiz_scores_list = [score.score for score in Score.query.filter_by(quiz_id=quiz.id).all()]
+            avg_score = round(sum(quiz_scores_list) / len(quiz_scores_list), 2) if quiz_scores_list else 0
+            quiz_scores[quiz.name] = avg_score
 
         summary = {
             "total_users": total_users,
@@ -642,7 +633,7 @@ class Summary(Resource):
             "total_questions": total_questions,
             "daily_attempts": daily_attempts_data,
             "quiz_distribution": quiz_distribution_data,
-            "average_quiz_score": avg_quiz_score
+            "average_scores_per_quiz": quiz_scores
         }
         return summary, 200
 

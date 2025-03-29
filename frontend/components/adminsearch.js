@@ -22,7 +22,7 @@ const AdminSearch = {
           <div class="card-body">
             <h5 class="card-title">{{ chapter.name }}</h5>
             <p class="card-text">{{ chapter.description }}</p>
-            <router-link :to="'/subjects/' + subjectId + '/chapters/' + chapter.id + '/quizzes'" class="btn btn-success">View Quiz</router-link>
+            <router-link :to="'/chapters/' + chapter.id + '/quizzes'" class="btn btn-success">View Quiz</router-link>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@ const AdminSearch = {
           <div class="card-body">
             <h5 class="card-title">{{ quiz.name }}</h5>
             <p class="card-text">{{ quiz.description }}</p>
-            <router-link :to="'/subjects/' + subjectId + '/chapters/' + chapterId + '/quizzes/' + quiz.id + '/questions'" class="btn btn-info">View Questions</router-link>
+            <router-link :to="'/quizzes/' + quiz.id + '/questions'" class="btn btn-info">View Questions</router-link>
           </div>
         </div>
       </div>

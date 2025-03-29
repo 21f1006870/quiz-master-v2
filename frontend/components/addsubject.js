@@ -12,7 +12,7 @@ const AddSubject = {
               <textarea class="form-control" v-model="description" required></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Add Subject</button>
-          <router-link to="/admin/subjects" class="btn btn-secondary ms-2">Cancel</router-link>
+          <router-link to="/admin/dashboard" class="btn btn-secondary ms-2">Cancel</router-link>
       </form>
   </div>
   `,

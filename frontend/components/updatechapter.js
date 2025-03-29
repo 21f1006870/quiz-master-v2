@@ -12,7 +12,6 @@ const UpdateChapter = {
             <input type="text" id="chapterDescription" v-model="chapterDescription" class="form-control" required>
           </div>
           <button type="submit" class="btn btn-primary">Update Chapter</button>
-          <router-link :to="'/subject' + 'subject.id' + '/chapters' " class="btn btn-secondary ms-2">Cancel</router-link>
         </form>
       </div>
     `,

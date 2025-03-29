@@ -22,7 +22,7 @@ const AddQuestion = {
             </select>
           </div>
           <button type="submit" class="btn btn-primary">Add Question</button>
-          <router-link :to="'/subjects/' + subjectId + '/chapters/' + chapterId + '/quizzes/' + quizId + '/questions'" class="btn btn-secondary ms-2">Cancel</router-link>
+          <router-link :to="'/quizzes/' + quizId + '/questions'" class="btn btn-secondary ms-2">Cancel</router-link>
         </form>
       </div>
     `,

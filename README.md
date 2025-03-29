@@ -1,54 +1,49 @@
 Quiz Master - V2
 It is a multi-user app (one requires an administrator and other users) that acts as an exam preparation site for multiple courses.
 
+Key features include:
 
-Frameworks used
+Role-based access for Admins and User.
+Real-time updates for dashboards using Vue.js.
+JWT-based authentication and authorization.
+All CURD(Create,Update,Read,Delete) operations for subjects, chapters, quiz and questions where the admin can create, update, read and delete. 
+Search functionality where admin can search based on subject, chapters and quiz.
+Summary where admin can visualize statistics of application. 
+Users can attempt time based quizzes.
+Users can check their previously attempted quizzes and review them.
+Implemented caching.
 
-SQLite for data storage
-Flask for API
-VueJS for UI
-VueJS Advanced with CLI (only if required, not necessary)
-Jinja2 templates if using CDN only for entry point (Not to be used for UI)
-Bootstrap for HTML generation and styling (No other CSS framework is allowed)
-SQLite for database (No other database is permitted)
-Redis for caching
-Redis and Celery for batch jobs
+Technologies Used:
 
+Flask : A lightweight backend framework for building web applications with Python. 
+SQLAlchemy : ORM (Object-Relational Mapping) tool for database interactions. 
+SQLite : Database management system for storing application data. 
+Vue.js: A progressive JavaScript framework for building user interfaces and enhancing interactivity
+Flask JWT Extended: An extension that provides tools for managing user sessions and authentication using JSON Web Tokens (JWT). 
+Flask Restful: A Python library that simplifies the creation of RESTful APIs for web applications. 
+Redis: An in-memory data structure store used as a caching database to optimize application performance. 
+ChartJS: Used for creating charts on the admin dashboard.
 
-The platform will have two roles:
+Steps to run application:
 
-Admin - root access - It is the superuser of the app and requires no registratio
+1. Create Virtual Environment
+python -m venv venv
 
-User - Can attempt any quiz of its choice
+2. Activate Virtual Environment
+On Windows
+venv\Scripts\activate
 
+On macOS/Linux
+source venv/bin/activate
 
-Core Functionalities
-Admin login and User login
+3. Install Dependencies
+pip install -r req.txt
 
-A login/register form with fields like username, password etc. for user and admin login
-The application should have only one admin identified by its role
-You can either use Flask security (session or token) or JWT based Token based authentication to implement role-based access control
-The app must have a suitable model to store and differentiate all types of users
-Admin Dashboard - for the Admin
+4. Start the application
+python main.py
 
-The admin should be added, whenever a new database is created
-The admin creates/edits/deletes a subject
-The admin creates/edits/deletes a chapter under the subject
-The admin will create a new quiz under a chapter
-Each quiz contains a set of questions  (MCQ - only one option correct)
-The admin can search the users/subjects/quizzes
-Shows the summary charts
+5. Start Redis server
+sudo service redis-server start
+redis-server
 
-Quiz management - for the Admin
-
-Edit/delete a quiz
-The admin specifies the date and duration(HH: MM) of the quiz
-The admin creates/edits/deletes the SOC questions inside the specific quiz
-
-User dashboard - for the User
-
-The user can attempt any quiz of his/her interest
-Every quiz has a timer
-Each quiz score is recorded
-The earlier quiz attempts are shown
 

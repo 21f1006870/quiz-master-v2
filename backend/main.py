@@ -36,7 +36,7 @@ with app.app_context():
 def index():
     return render_template("index.html")
 
-# Catch all other routes and serve the index file
+# Catch all other routes 
 @app.route("/<path:path>")
 def catch_all(path):
     return render_template("index.html")
